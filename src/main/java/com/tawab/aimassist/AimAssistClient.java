@@ -5,13 +5,12 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.option.KeyBinding;
 import net.minecraft.client.util.InputUtil;
+import net.minecraft.text.Text;
 import org.lwjgl.glfw.GLFW;
 
 public class AimAssistClient implements ClientModInitializer {
 
     public static final String MOD_ID = "aimassisttawab";
-
-    private static boolean aimAssistEnabled = false;
 
     private static KeyBinding toggleKey;
     private static KeyBinding settingsKey;
@@ -19,6 +18,7 @@ public class AimAssistClient implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
 
+        // Main ON/OFF key: =
         toggleKey = KeyBindingHelper.registerKeyBinding(
                 new KeyBinding(
                         "key.aimassisttawab.toggle",
@@ -28,6 +28,7 @@ public class AimAssistClient implements ClientModInitializer {
                 )
         );
 
+        // Settings key: Right Shift
         settingsKey = KeyBindingHelper.registerKeyBinding(
                 new KeyBinding(
                         "key.aimassisttawab.settings",
@@ -39,23 +40,31 @@ public class AimAssistClient implements ClientModInitializer {
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
 
+            // Toggle Aim Assist
             while (toggleKey.wasPressed()) {
+
                 toggle();
 
                 if (client.player != null) {
                     client.player.sendMessage(
-                            net.minecraft.text.Text.literal(
+                            Text.literal(
                                     "Aim Assist: " +
-                                            (aimAssistEnabled ? "ON" : "OFF")
+                                            (AimAssistConfig.enabled
+                                                    ? "ON"
+                                                    : "OFF")
                             ),
                             true
                     );
                 }
             }
 
+            // Open Settings
             while (settingsKey.wasPressed()) {
+
                 if (client.currentScreen == null) {
-                    client.setScreen(new AimAssistScreen());
+                    client.setScreen(
+                            new AimAssistScreen()
+                    );
                 }
             }
         });
@@ -66,26 +75,11 @@ public class AimAssistClient implements ClientModInitializer {
     }
 
     public static void toggle() {
-        aimAssistEnabled = !aimAssistEnabled;
+        AimAssistConfig.enabled =
+                !AimAssistConfig.enabled;
     }
 
     public static boolean isAimAssistEnabled() {
-        return aimAssistEnabled;
+        return AimAssistConfig.enabled;
     }
-                    }                            net.minecraft.text.Text.literal(
-                                    "Aim Assist: " +
-                                            (aimAssistEnabled ? "ON" : "OFF")
-                            ),
-                            true
-                    );
-                }
-            }
-        });
-
-        System.out.println("[Aim Assist By Tawab] Loaded! Press = to toggle.");
     }
-
-    public static boolean isAimAssistEnabled() {
-        return aimAssistEnabled;
-    }
-                    }
