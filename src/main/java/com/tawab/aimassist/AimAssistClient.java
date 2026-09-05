@@ -14,6 +14,7 @@ public class AimAssistClient implements ClientModInitializer {
     private static boolean aimAssistEnabled = false;
 
     private static KeyBinding toggleKey;
+    private static KeyBinding settingsKey;
 
     @Override
     public void onInitializeClient() {
@@ -27,14 +28,51 @@ public class AimAssistClient implements ClientModInitializer {
                 )
         );
 
+        settingsKey = KeyBindingHelper.registerKeyBinding(
+                new KeyBinding(
+                        "key.aimassisttawab.settings",
+                        InputUtil.Type.KEYSYM,
+                        GLFW.GLFW_KEY_RIGHT_SHIFT,
+                        "category.aimassisttawab"
+                )
+        );
+
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
 
             while (toggleKey.wasPressed()) {
-                aimAssistEnabled = !aimAssistEnabled;
+                toggle();
 
                 if (client.player != null) {
                     client.player.sendMessage(
                             net.minecraft.text.Text.literal(
+                                    "Aim Assist: " +
+                                            (aimAssistEnabled ? "ON" : "OFF")
+                            ),
+                            true
+                    );
+                }
+            }
+
+            while (settingsKey.wasPressed()) {
+                if (client.currentScreen == null) {
+                    client.setScreen(new AimAssistScreen());
+                }
+            }
+        });
+
+        System.out.println(
+                "[Aim Assist By Tawab] Loaded successfully!"
+        );
+    }
+
+    public static void toggle() {
+        aimAssistEnabled = !aimAssistEnabled;
+    }
+
+    public static boolean isAimAssistEnabled() {
+        return aimAssistEnabled;
+    }
+                    }                            net.minecraft.text.Text.literal(
                                     "Aim Assist: " +
                                             (aimAssistEnabled ? "ON" : "OFF")
                             ),
