@@ -1,40 +1,94 @@
 package com.tawab.aimassist;
 
-import net.fabricmc.api.ClientModInitializer;
-import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
-import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
-import net.minecraft.client.option.KeyBinding;
-import net.minecraft.client.util.InputUtil;
-import org.lwjgl.glfw.GLFW;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.ButtonWidget;
+import net.minecraft.text.Text;
 
-public class AimAssistClient implements ClientModInitializer {
+public class AimAssistScreen extends Screen {
 
-    public static final String MOD_ID = "aimassisttawab";
-
-    private static boolean aimAssistEnabled = false;
-
-    private static KeyBinding toggleKey;
-    private static KeyBinding settingsKey;
+    public AimAssistScreen() {
+        super(Text.literal("Aim Assist By Tawab"));
+    }
 
     @Override
-    public void onInitializeClient() {
+    protected void init() {
 
-        toggleKey = KeyBindingHelper.registerKeyBinding(
-                new KeyBinding(
-                        "key.aimassisttawab.toggle",
-                        InputUtil.Type.KEYSYM,
-                        GLFW.GLFW_KEY_EQUAL,
-                        "category.aimassisttawab"
-                )
+        int centerX = this.width / 2;
+
+        this.addDrawableChild(
+                ButtonWidget.builder(
+                        Text.literal(
+                                "Aim Assist: " +
+                                        (AimAssistClient.isAimAssistEnabled()
+                                                ? "ON"
+                                                : "OFF")
+                        ),
+                        button -> {
+
+                            AimAssistClient.toggle();
+
+                            button.setMessage(
+                                    Text.literal(
+                                            "Aim Assist: " +
+                                                    (AimAssistClient.isAimAssistEnabled()
+                                                            ? "ON"
+                                                            : "OFF")
+                                    )
+                            );
+                        }
+                ).dimensions(
+                        centerX - 100,
+                        80,
+                        200,
+                        20
+                ).build()
         );
 
-        settingsKey = KeyBindingHelper.registerKeyBinding(
-                new KeyBinding(
-                        "key.aimassisttawab.settings",
-                        InputUtil.Type.KEYSYM,
-                        GLFW.GLFW_KEY_RIGHT_SHIFT,
-                        "category.aimassisttawab"
-                )
+        this.addDrawableChild(
+                ButtonWidget.builder(
+                        Text.literal("Done"),
+                        button -> close()
+                ).dimensions(
+                        centerX - 100,
+                        120,
+                        200,
+                        20
+                ).build()
+        );
+    }
+
+    @Override
+    public void render(
+            DrawContext context,
+            int mouseX,
+            int mouseY,
+            float delta
+    ) {
+
+        this.renderBackground(
+                context,
+                mouseX,
+                mouseY,
+                delta
+        );
+
+        context.drawCenteredTextWithShadow(
+                this.textRenderer,
+                this.title,
+                this.width / 2,
+                40,
+                0xFFFFFF
+        );
+
+        super.render(
+                context,
+                mouseX,
+                mouseY,
+                delta
+        );
+    }
+            }                )
         );
 
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
