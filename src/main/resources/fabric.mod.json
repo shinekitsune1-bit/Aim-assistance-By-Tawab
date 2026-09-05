@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "id": "aimassist",
+  "version": "${version}",
+  "name": "Aim Assist By Tawab",
+  "description": "Aim assistance mod for Minecraft 1.21.8.",
+  "authors": [
+    "Tawab"
+  ],
+  "license": "MIT",
+  "environment": "client",
+  "entrypoints": {
+    "client": [
+      "com.tawab.aimassist.AimAssistClient"
+    ]
+  },
+  "depends": {
+    "fabricloader": ">=0.19.5",
+    "minecraft": "~1.21.8",
+    "fabric-api": "*"
+  }
+}
